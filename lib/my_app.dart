@@ -34,14 +34,27 @@ class MyApp extends StatelessWidget {
   FloatingActionButton floatingActionButton(HomeController controller) {
     return FloatingActionButton(
       child: const Icon(Icons.add),
-      onPressed: () {
-        controller.insertNote();
-        Get.showSnackbar(
-          const GetSnackBar(
-            title: "added to database",
-            message: "added to database",
-          ),
-        );
+      onPressed: () async {
+        int response = await controller.insertNote();
+        if (response == 0) {
+          Get.showSnackbar(
+            const GetSnackBar(
+              title: "Failed",
+              message: "failed to add= to database",
+              icon: Icon(Icons.error, color: Colors.red),
+              duration: Duration(milliseconds: 1600),
+            ),
+          );
+        } else {
+          Get.showSnackbar(
+            const GetSnackBar(
+              title: "Success",
+              message: "added to database",
+              icon: Icon(Icons.done, color: Colors.blue),
+              duration: Duration(milliseconds: 1200),
+            ),
+          );
+        }
       },
     );
   }

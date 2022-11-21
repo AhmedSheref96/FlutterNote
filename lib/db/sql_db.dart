@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -11,8 +13,8 @@ class SqlDb {
   initialDB() async {
     String dbsPath = await getDatabasesPath();
     String mDbPath = join(dbsPath, "flutterNotesDb.db");
-    Database mDb = await openDatabase(mDbPath, onCreate: _onCreate, version: 7);
-    print("--------------- create db $mDbPath ");
+    Database mDb = await openDatabase(mDbPath,
+        onCreate: _onCreate, onUpgrade: _onUpgrade, version: 11);
     return mDb;
   }
 
@@ -20,24 +22,32 @@ class SqlDb {
     await db.execute('''
     CREATE TABLE "notes" ("id" INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, "noteTitle" TEXT,"noteDescription" TEXT ,"noteImagesPaths" TEXT)
     ''');
-    print("--------------- notes table created ");
+  }
+
+  _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    // await db.execute('''
+    // ALTER TABLE "notes" ADD "isFav" INTEGER
+    // ''');
   }
 
   readFromDb(String sql) async {
-    print("--------------- 00 ");
     Database db = await mDb;
-
-    print("--------------- 11 ");
     List<Map<String, Object?>> response = await db.rawQuery(sql);
-
-    print("--------------- 22 $response ");
     return response;
   }
 
   insertIntoDb(String sql) async {
     Database db = await mDb;
     int response = await db.rawInsert(sql);
-    print("--------------- 55 $response ");
     return response;
   }
+
+  updateNoteItem(String sql) async {
+    Database db = await mDb;
+    print("-------------- update sql $sql");
+    int response = await db.rawUpdate(sql);
+    print("------------------ updated $response");
+    return response;
+  }
+
 }

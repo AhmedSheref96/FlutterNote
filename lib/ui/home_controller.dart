@@ -9,14 +9,20 @@ class HomeController extends GetxController {
     return _db.readNotes();
   }
 
-  void insertNote() async {
-    await _db.insertIntoDb(
+  insertNote() async {
+    int response =await _db.insertIntoDb(
       NoteModel(
           id: 1,
           noteTitle: "Hi There",
           noteDescription: "Hi There That Is First Note Item",
           noteImagesPaths: null),
     );
+    update();
+    return response;
+  }
+
+  void updateNoteItem(NoteModel item) async {
+    await _db.updateNoteItem(item);
     update();
   }
 
